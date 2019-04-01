@@ -10,11 +10,12 @@ from chainer import Variable, optimizers,Chain
 class Model(Chain):
     def __init__(self):
         super(Model, self).__init__(
-            l1 = L.Linear(2,1),
+            l1 = L.Linear(2,2),
+            l2 = L.Linear(2,1),
             )
     def __call__(self,x):
         h = F.sigmoid(self.l1(x))   # シグモイド関数
-        return h
+        return self.l2(h)
 
 model = Model()
 optimizer = optimizers.MomentumSGD(lr=0.01, momentum=0.9)
