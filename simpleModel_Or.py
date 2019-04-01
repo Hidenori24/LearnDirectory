@@ -13,7 +13,7 @@ class Model(Chain):
             l1 = L.Linear(2,1),
             )
     def __call__(self,x):
-        h = self.l1(x)
+        h = F.sigmoid(self.l1(x))   # シグモイド関数
         return h
 
 model = Model()
