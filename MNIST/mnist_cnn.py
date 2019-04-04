@@ -13,18 +13,22 @@ train, test = chainer.datasets.get_mnist(ndim=3)
 class Model(Chain):
     def __init__(self):
         super(Model, self).__init__(
-            l1 = L.Linear(784,100),
-            l2 = L.Linear(100,100),
-            l3 = L.Linear(100,10),
+            conv1=L.Convolution2D(1,20,5),
+            conv2=L.Convolution2D(20,50,5),
+            fc1 = L.Linear(800,500),
+            fc2 = L.Linear(500,10),
             )
     def __call__(self,x):
-        h = F.relu(self.l1(x))
-        h = F.relu(self.l2(h))
-        return self.l3(h)
+        cv1 = self.conv1(x)
+        relu = F.relu(cv1)
+        h = F.max_pooling_2d(relu, 2)
+        h = F.max_pooling_2d(F.relu(self.conv2(h)),2)
+        h = F.dropout(F.relu(self.fc1(h)), train=train)
+        return self.fc2(h)
+
 
 model = L.Classifier(Model())
 optimizer = optimizers.MomentumSGD(lr=0.01, momentum=0.9)
-
 optimizer.setup(model)
 
 batchsize=100
